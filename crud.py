@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 
 import models
 import schemas
-from exceptions import CustomException
 
 
 def get_friend_requests(db: Session, username: str):
@@ -64,7 +63,7 @@ def create_friend_request(db: Session, requesting_user_name: str, receiving_user
             db.commit()
             return
         else:
-            raise CustomException(message="Friend request already accepted.")
+            raise Exception("Friend request already accepted.")
 
     # If request exists from requesting user
     received_request = db.query(models.Friends) \
@@ -74,9 +73,9 @@ def create_friend_request(db: Session, requesting_user_name: str, receiving_user
 
     if received_request is not None:
         if received_request.status == models.Status.RECEIVED:
-            raise CustomException(message="Duplicate friend request.")
+            raise Exception("Duplicate friend request.")
         else:
-            raise CustomException(message="Already friends.")
+            raise Exception("Already friends.")
 
     # Add to db
     friend_request = models.Friends(requesting_user_name=requesting_user_name,
